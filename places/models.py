@@ -12,3 +12,14 @@ class Place(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class PlacePhoto(models.Model):
+    photo = models.ImageField(verbose_name='Фото')
+    priority = models.IntegerField(verbose_name='Порядковый номер',
+                                   null=True, blank=True)
+    place = models.ForeignKey(Place, verbose_name='Компания', null=True,
+                              on_delete=models.SET_NULL, related_name='photos')
+    
+    def __str__(self):
+        return f'{self.priority} {self.place.title}'
