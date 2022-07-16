@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from places.models import Place
 
@@ -39,5 +39,5 @@ def place_detail_view(request, place_id):
             'lat': place.latitude
         }
     }
-    return JsonResponse(context, safe=False, 
+    return JsonResponse(context, safe=False,
                         json_dumps_params={'ensure_ascii': False, 'indent': 4})
