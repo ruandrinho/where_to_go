@@ -23,8 +23,10 @@ class PhotoInline(SortableTabularInline):
 @admin.register(Place)
 class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [PhotoInline, ]
+    search_fields = ['title', ]
 
 
-@admin.register(PlacePhoto)
-class PlacePhotoAdmin(admin.ModelAdmin):
-    pass
+# Uncomment this to show "Place Photos" in admin menu
+# @admin.register(PlacePhoto)
+# class PlacePhotoAdmin(admin.ModelAdmin):
+#     pass
