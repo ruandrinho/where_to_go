@@ -4,7 +4,6 @@ from adminsortable2.admin import SortableAdminBase, SortableTabularInline
 from places.models import Place, PlacePhoto
 
 
-# Register your models here.
 class PhotoInline(SortableTabularInline):
     model = PlacePhoto
     extra = 1
@@ -24,6 +23,7 @@ class PhotoInline(SortableTabularInline):
 class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [PhotoInline, ]
     search_fields = ['title', ]
+    list_display = ['title', 'longitude', 'latitude']
 
 
 # Uncomment this to show "Place Photos" in admin menu
