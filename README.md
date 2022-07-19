@@ -2,9 +2,9 @@
 
 Каталог экскурсионных компаний и проектов на карте Москвы.
 
-Рабочая версия:
+Рабочая версия: https://andrinho.pythonanywhere.com/
 
-Админка:
+Админка: https://andrinho.pythonanywhere.com/admin
 
 ## Как установить
 
