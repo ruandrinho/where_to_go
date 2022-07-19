@@ -63,9 +63,9 @@ class Command(BaseCommand):
                 continue
             for img_url in new_place.get('imgs'):
                 filename = get_filename_from_url(img_url)
-                logger.warning(f'Скачиваем файл {filename}')
                 filename = get_unique_media_filename(settings.MEDIA_ROOT,
                                                      filename)
+                logger.warning(f'Скачиваем файл {filename}')
                 try:
                     image_response = requests.get(img_url)
                     image_response.raise_for_status()
