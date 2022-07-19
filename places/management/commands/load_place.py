@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from places.models import Place, PlacePhoto
 from urllib.parse import urlsplit, unquote
 import requests
@@ -46,15 +47,19 @@ class Command(BaseCommand):
                 logger.warning(f'Не удалось считать данные из url {json_url}')
                 continue
             logger.warning(f'Создаём объект {new_place.get("title")}')
-            new_place_object, created = Place.objects.get_or_create(
-                title=new_place.get('title'),
-                description_short=new_place.get('description_short'),
-                description_long=new_place.get('description_long'),
-                longitude=new_place.get('coordinates').get('lng'),
-                latitude=new_place.get('coordinates').get('lat')
-            )
+            try:
+                new_place_object, created = Place.objects.get_or_create(
+                    title=new_place.get('title'),
+                    description_short=new_place.get('description_short'),
+                    description_long=new_place.get('description_long'),
+                    longitude=new_place.get('coordinates').get('lng'),
+                    latitude=new_place.get('coordinates').get('lat')
+                )
+            except IntegrityError:
+                logger.warning(f'Не удалось создать объект из url {json_url}')
+                continue
             if not created:
-                logger.warning(f'Неверный формат данных в url {json_url}')
+                logger.warning(f'Не удалось создать объект из url {json_url}')
                 continue
             for img_url in new_place.get('imgs'):
                 filename = get_filename_from_url(img_url)
