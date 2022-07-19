@@ -4,7 +4,8 @@ from tinymce.models import HTMLField
 
 # Create your models here.
 class Place(models.Model):
-    title = models.CharField(max_length=200, verbose_name='Название компании')
+    title = models.CharField(max_length=200, verbose_name='Название компании',
+                             unique=True)
     description_short = models.TextField(verbose_name='Краткое описание',
                                          null=True)
     description_long = HTMLField(verbose_name='Полное описание',
@@ -14,6 +15,7 @@ class Place(models.Model):
 
     class Meta:
         ordering = ['title', ]
+        unique_together = ['longitude', 'latitude']
 
     def __str__(self):
         return self.title
