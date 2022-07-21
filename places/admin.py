@@ -11,11 +11,10 @@ class PhotoInline(SortableTabularInline):
     fields = ('priority', 'photo', 'photo_preview')
 
     def photo_preview(self, obj):
-        height = min(obj.photo.height, 200)
-        width = int(obj.photo.width * height / obj.photo.height)
+        max_height = 200
         return format_html(
-            '<img src="{}" width="{}" height="{}">',
-            obj.photo.url, width, height
+            '<img src="{}" style="max-height: {}px">',
+            obj.photo.url, max_height
         )
 
 
