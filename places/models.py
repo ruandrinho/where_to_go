@@ -25,8 +25,8 @@ class PlacePhoto(models.Model):
     photo = models.ImageField(verbose_name='Фото')
     priority = models.IntegerField(verbose_name='Порядковый номер',
                                    default=0)
-    place = models.ForeignKey(Place, verbose_name='Компания', null=True,
-                              on_delete=models.SET_NULL, related_name='photos')
+    place = models.ForeignKey(Place, verbose_name='Компания',
+                              on_delete=models.CASCADE, related_name='photos')
 
     class Meta:
         ordering = ['priority', ]
