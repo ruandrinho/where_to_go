@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from places.models import Place
 
 
@@ -18,7 +19,7 @@ def main_page(request):
             'properties': {
                 'title': place.title,
                 'placeId': place.id,
-                'detailsUrl': f'/places/{place.id}/'
+                'detailsUrl': reverse('single_place', args=(place.id,))
             }
         }
         places_for_page['features'].append(place_for_page)
