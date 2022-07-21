@@ -24,7 +24,7 @@ class Place(models.Model):
 class PlacePhoto(models.Model):
     photo = models.ImageField(verbose_name='Фото')
     priority = models.IntegerField(verbose_name='Порядковый номер',
-                                   default=0, null=False, blank=False)
+                                   default=0)
     place = models.ForeignKey(Place, verbose_name='Компания', null=True,
                               on_delete=models.SET_NULL, related_name='photos')
 
