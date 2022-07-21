@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.db import IntegrityError
 from places.models import Place, PlacePhoto
 from urllib.parse import urlsplit, unquote
 import requests
@@ -41,27 +40,46 @@ class Command(BaseCommand):
             except requests.exceptions.RequestException:
                 logger.warning(f'Не удалось загрузить url {json_url}')
                 continue
+
             try:
                 new_place = new_place_response.json()
             except requests.exceptions.JSONDecodeError:
                 logger.warning(f'Не удалось считать данные из url {json_url}')
                 continue
+
             logger.warning(f'Создаём объект {new_place.get("title")}')
-            try:
-                new_place_object, created = Place.objects.get_or_create(
-                    title=new_place.get('title'),
-                    description_short=new_place.get('description_short'),
-                    description_long=new_place.get('description_long'),
-                    longitude=new_place.get('coordinates').get('lng'),
-                    latitude=new_place.get('coordinates').get('lat')
-                )
-            except IntegrityError:
-                logger.warning(f'Не удалось создать объект из url {json_url}')
-                continue
+            new_place_object, created = Place.objects.get_or_create(
+                title=new_place.get('title')
+            )
             if not created:
-                logger.warning(f'Не удалось создать объект из url {json_url}')
+                logger.warning(f'Объект с заголовком из url {json_url} '
+                               f'уже существует')
                 continue
-            for img_url in new_place.get('imgs'):
+
+            description_short = new_place.get('description_short')
+            if description_short:
+                new_place_object.description_short = description_short
+
+            description_long = new_place.get('description_long')
+            if description_long:
+                new_place_object.description_long = description_long
+
+            coordinates = new_place.get('coordinates')
+            if coordinates:
+                longitude = coordinates.get('lng')
+                if longitude:
+                    new_place_object.longitude = longitude
+                latitude = coordinates.get('lat')
+                if latitude:
+                    new_place_object.latitude = latitude
+
+            new_place_object.save()
+
+            img_urls = new_place.get('imgs')
+            if not img_urls:
+                continue
+
+            for img_url in img_urls:
                 filename = get_filename_from_url(img_url)
                 filename = get_unique_media_filename(settings.MEDIA_ROOT,
                                                      filename)
