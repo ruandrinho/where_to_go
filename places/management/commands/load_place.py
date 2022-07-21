@@ -1,8 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from places.models import Place, PlacePhoto
 from urllib.parse import urlsplit, unquote
+from random import randint
 import requests
 import logging
 import os
@@ -52,8 +54,7 @@ class Command(BaseCommand):
                 title=new_place.get('title')
             )
             if not created:
-                logger.warning(f'Объект с заголовком из url {json_url} '
-                               f'уже существует')
+                logger.warning('Объект с таким заголовком уже существует')
                 continue
 
             description_short = new_place.get('description_short')
@@ -64,6 +65,8 @@ class Command(BaseCommand):
             if description_long:
                 new_place_object.description_long = description_long
 
+            new_place_object.save()
+
             coordinates = new_place.get('coordinates')
             if coordinates:
                 longitude = coordinates.get('lng')
@@ -73,7 +76,15 @@ class Command(BaseCommand):
                 if latitude:
                     new_place_object.latitude = latitude
 
-            new_place_object.save()
+            try:
+                new_place_object.save()
+            except IntegrityError:
+                logger.warning('Объект с такими широтой и долготой уже '
+                               'существует, будут установлены случайные '
+                               'координаты вне существующего диапазона')
+                new_place_object.longitude = randint(1000000, 9999999)
+                new_place_object.latitude = randint(1000000, 9999999)
+                new_place_object.save()
 
             img_urls = new_place.get('imgs')
             if not img_urls:
