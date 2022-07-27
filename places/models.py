@@ -10,8 +10,8 @@ class Place(models.Model):
                                          blank=True)
     description_long = HTMLField(verbose_name='Полное описание',
                                  blank=True)
-    longitude = models.FloatField(verbose_name='Долгота', default=0)
-    latitude = models.FloatField(verbose_name='Широта', default=0)
+    longitude = models.FloatField(verbose_name='Долгота')
+    latitude = models.FloatField(verbose_name='Широта')
 
     class Meta:
         ordering = ['title', ]
