@@ -32,7 +32,7 @@ def place_detail_view(request, place_id):
     context = {
         'title': place.title,
         'imgs': [photo.photo.url for photo in
-                 place.photos.all().order_by('priority')],
+                 place.photos.order_by('priority')],
         'description_short': place.description_short,
         'description_long': place.description_long,
         'coordinates': {
