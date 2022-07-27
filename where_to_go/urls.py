@@ -23,8 +23,8 @@ from where_to_go import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.main_page),
-    path('places/<int:place_id>/', views.place_detail_view,
+    path('', views.show_main_page),
+    path('places/<int:place_id>/', views.show_place_detail_view,
          name='single_place'),
     path('tinymce/', include('tinymce.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +\
