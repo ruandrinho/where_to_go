@@ -74,12 +74,10 @@ class Command(BaseCommand):
                 logger.warning('Такой объект уже содержится в базе')
                 continue
 
-            description_short = new_place.get('description_short')
-            if description_short:
-                place_object.description_short = description_short
-            description_long = new_place.get('description_long')
-            if description_long:
-                place_object.description_long = description_long
+            place_object.description_short = new_place.get('description_short',
+                                                           '')
+            place_object.description_long = new_place.get('description_long',
+                                                          '')
             place_object.save()
 
             img_urls = new_place.get('imgs')
