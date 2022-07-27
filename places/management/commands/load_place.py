@@ -1,10 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.db import IntegrityError
 from places.models import Place, PlacePhoto
 from urllib.parse import urlsplit, unquote
-from random import randint
 import requests
 import logging
 import os
@@ -49,42 +47,40 @@ class Command(BaseCommand):
                 logger.warning(f'Не удалось считать данные из url {json_url}')
                 continue
 
-            logger.warning(f'Создаём объект {new_place.get("title")}')
-            new_place_object, created = Place.objects.get_or_create(
-                title=new_place.get('title')
+            title = new_place.get('title')
+            if not title:
+                logger.warning('Отсутствует заголовок')
+                continue
+
+            longitude = latitude = 0
+            coordinates = new_place.get('coordinates')
+            if coordinates:
+                longitude = coordinates.get('lng')
+                latitude = coordinates.get('lat')
+            if not longitude:
+                logger.warning('Отсутствует значение долготы')
+                continue
+            if not latitude:
+                logger.warning('Отсутствует значение широты')
+                continue
+
+            logger.warning(f'Создаём объект {title}')
+            place_object, created = Place.objects.get_or_create(
+                title=title,
+                longitude=longitude,
+                latitude=latitude
             )
             if not created:
-                logger.warning('Объект с таким заголовком уже существует')
+                logger.warning('Такой объект уже содержится в базе')
                 continue
 
             description_short = new_place.get('description_short')
             if description_short:
-                new_place_object.description_short = description_short
-
+                place_object.description_short = description_short
             description_long = new_place.get('description_long')
             if description_long:
-                new_place_object.description_long = description_long
-
-            new_place_object.save()
-
-            coordinates = new_place.get('coordinates')
-            if coordinates:
-                longitude = coordinates.get('lng')
-                if longitude:
-                    new_place_object.longitude = longitude
-                latitude = coordinates.get('lat')
-                if latitude:
-                    new_place_object.latitude = latitude
-
-            try:
-                new_place_object.save()
-            except IntegrityError:
-                logger.warning('Объект с такими широтой и долготой уже '
-                               'существует, будут установлены случайные '
-                               'координаты вне существующего диапазона')
-                new_place_object.longitude = randint(1000000, 9999999)
-                new_place_object.latitude = randint(1000000, 9999999)
-                new_place_object.save()
+                place_object.description_long = description_long
+            place_object.save()
 
             img_urls = new_place.get('imgs')
             if not img_urls:
@@ -102,5 +98,5 @@ class Command(BaseCommand):
                     continue
                 content_file = ContentFile(image_response.content)
                 new_place_photo = PlacePhoto.objects.create(
-                    place=new_place_object)
+                    place=place_object)
                 new_place_photo.photo.save(filename, content_file, save=True)
