@@ -23,9 +23,3 @@ class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [PhotoInline, ]
     search_fields = ['title', ]
     list_display = ['title', 'longitude', 'latitude']
-
-
-# Uncomment this to show "Place Photos" in admin menu
-# @admin.register(PlacePhoto)
-# class PlacePhotoAdmin(admin.ModelAdmin):
-#     pass
