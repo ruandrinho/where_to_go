@@ -67,8 +67,10 @@ class Command(BaseCommand):
             logger.warning(f'Создаём объект {title}')
             place_object, created = Place.objects.get_or_create(
                 title=title,
-                longitude=longitude,
-                latitude=latitude
+                defaults={
+                    'longitude': longitude,
+                    'latitude': latitude
+                }
             )
             if not created:
                 logger.warning('Такой объект уже содержится в базе')
