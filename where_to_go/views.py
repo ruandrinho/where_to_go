@@ -40,5 +40,4 @@ def show_place_detail_view(request, place_id):
             'lat': place.latitude
         }
     }
-    return JsonResponse(context, safe=False,
-                        json_dumps_params={'ensure_ascii': False, 'indent': 4})
+    return JsonResponse(context, json_dumps_params={'ensure_ascii': False})

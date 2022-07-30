@@ -96,7 +96,7 @@ class Command(BaseCommand):
                     image_response.raise_for_status()
                 except requests.exceptions.RequestException:
                     continue
-                content_file = ContentFile(image_response.content)
-                new_place_photo = PlacePhoto.objects.create(
-                    place=place_object)
-                new_place_photo.photo.save(filename, content_file, save=True)
+                content_file = ContentFile(image_response.content,
+                                           name=filename)
+                PlacePhoto.objects.create(
+                    place=place_object, photo=content_file)
