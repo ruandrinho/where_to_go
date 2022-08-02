@@ -70,7 +70,8 @@ class Command(BaseCommand):
                 defaults={
                     'longitude': longitude,
                     'latitude': latitude,
-                    'description_short': new_place.get('description_short', ''),
+                    'description_short': new_place.get('description_short',
+                                                       ''),
                     'description_long': new_place.get('description_long', '')
                 }
             )
