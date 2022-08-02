@@ -69,18 +69,14 @@ class Command(BaseCommand):
                 title=title,
                 defaults={
                     'longitude': longitude,
-                    'latitude': latitude
+                    'latitude': latitude,
+                    'description_short': new_place.get('description_short', ''),
+                    'description_long': new_place.get('description_long', '')
                 }
             )
             if not created:
                 logger.warning('Такой объект уже содержится в базе')
                 continue
-
-            place_object.description_short = new_place.get('description_short',
-                                                           '')
-            place_object.description_long = new_place.get('description_long',
-                                                          '')
-            place_object.save()
 
             img_urls = new_place.get('imgs')
             if not img_urls:
